@@ -9,8 +9,18 @@ from typing import Dict, List, Optional
 from pathlib import Path
 
 import pandas as pd
-from playwright.async_api import async_playwright, Page, Route, Request
 from dotenv import load_dotenv
+
+# Carrega variáveis de ambiente do arquivo .env
+# Tenta carregar tanto do diretório atual quanto do diretório raiz do projeto
+load_dotenv()
+load_dotenv(Path(__file__).parents[2] / ".env")
+
+# Configuração para Vercel - Definir antes de importar playwright
+os.environ["PLAYWRIGHT_BROWSERS_PATH"] = "0"
+
+# Agora importa o Playwright após configurar a variável
+from playwright.async_api import async_playwright, Page, Route, Request
 
 # Configuração de codificação para o sistema
 # Força UTF-8 para entrada/saída padrão
@@ -18,11 +28,6 @@ if sys.stdout.encoding != 'utf-8':
     sys.stdout.reconfigure(encoding='utf-8')
 if sys.stderr.encoding != 'utf-8':
     sys.stderr.reconfigure(encoding='utf-8')
-
-# Carrega variáveis de ambiente do arquivo .env
-# Tenta carregar tanto do diretório atual quanto do diretório raiz do projeto
-load_dotenv()
-load_dotenv(Path(__file__).parents[2] / ".env")
 
 # Configuração de logging com suporte a UTF-8
 logging.basicConfig(
@@ -46,6 +51,7 @@ logger.info(f"CANAIME_URL: {CANAIME_URL}")
 logger.info(f"CANAIME_LOGIN_URL: {CANAIME_LOGIN_URL}")
 logger.info(f"CANAIME_USER definido: {'Sim' if CANAIME_USER else 'Não'}")
 logger.info(f"CANAIME_PASSWORD definido: {'Sim' if CANAIME_PASSWORD else 'Não'}")
+logger.info(f"PLAYWRIGHT_BROWSERS_PATH: {os.environ.get('PLAYWRIGHT_BROWSERS_PATH')}")
 
 class CanaimeScraper:
     """Classe responsável por fazer scraping no sistema Canaimé"""
